@@ -4445,8 +4445,8 @@ addon.get("/poster/:type/:id", async function (req, res) {
       });
       res.setHeader('Content-Type', 'image/jpeg');
       res.setHeader('Cache-Control', 'public, max-age=86400, stale-while-revalidate=604800'); // Cache for 1 day
-      res.setHeader('X-Cache-Status', imageResponse.headers['X-Cache-Status']); // Passing through NGINX cache headers
-      res.setHeader('X-Cache-Response-Time', imageResponse.headers['X-Cache-Response-Time']); // Passing through NGINX cache headers
+      res.setHeader('X-Cache-Status', imageResponse.headers['x-cache-status']); // Passing through NGINX cache headers
+      res.setHeader('X-Cache-Response-Time', imageResponse.headers['x-cache-response-time']); // Passing through NGINX cache headers
       imageResponse.data.pipe(res);
       console.log("Success! Piped the image from local proxy provider directly to the user.");
       consola.success(`Delivered poster for ${id} via proxy: `, proxyPosterUrl);
