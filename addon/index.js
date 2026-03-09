@@ -4438,7 +4438,6 @@ addon.get("/poster/:type/:id", async function (req, res) {
     let proxyPosterUrl = proxyServerPrefix + "" + posterUrl;
     consola.success(`Built proxy poster url for ${id}: `, proxyPosterUrl);
     if (proxyPosterUrl && await checkIfExists(proxyPosterUrl)) {
-      //console.log("Success! Pipe the image from rating provider directly to the user.");
       const imageResponse = await axios({
         method: 'get',
         url: proxyPosterUrl,
@@ -4449,9 +4448,9 @@ addon.get("/poster/:type/:id", async function (req, res) {
       res.setHeader('X-Cache-Status', imageResponse.headers['X-Cache-Status']); // Passing through NGINX cache headers
       res.setHeader('X-Cache-Response-Time', imageResponse.headers['X-Cache-Response-Time']); // Passing through NGINX cache headers
       imageResponse.data.pipe(res);
+      console.log("Success! Piped the image from local proxy provider directly to the user.");
       consola.success(`Delivered poster for ${id} via proxy: `, proxyPosterUrl);
     } else if (posterUrl && await checkIfExists(posterUrl)) {
-      //console.log("Success! Pipe the image from rating provider directly to the user.");
       const imageResponse = await axios({
         method: 'get',
         url: posterUrl,
@@ -4460,7 +4459,9 @@ addon.get("/poster/:type/:id", async function (req, res) {
       res.setHeader('Content-Type', 'image/jpeg');
       res.setHeader('Cache-Control', 'public, max-age=86400, stale-while-revalidate=604800'); // Cache for 1 day
       imageResponse.data.pipe(res);
+      console.log("Success! Piped the image from rating provider directly to the user.");
     } else {
+      consola.warn(`Did a poster redict for ${id}: `, posterUrl);
       res.redirect(302, fallback);
     }
   } catch (error) {
