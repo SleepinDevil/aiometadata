@@ -4436,6 +4436,7 @@ addon.get("/poster/:type/:id", async function (req, res) {
     // SD experimenting with local nginx reverse proxy cache
     let proxyServerPrefix = "http://192.168.0.56:1337/proxy/";
     let proxyPosterUrl = proxyServerPrefix + "" + posterUrl;
+    consola.success(`Built proxy poster url for ${id}: `, proxyPosterUrl);
     if (proxyPosterUrl && await checkIfExists(proxyPosterUrl)) {
       //console.log("Success! Pipe the image from rating provider directly to the user.");
       const imageResponse = await axios({
@@ -4448,6 +4449,7 @@ addon.get("/poster/:type/:id", async function (req, res) {
       res.setHeader('X-Cache-Status', imageResponse.headers['X-Cache-Status']); // Passing through NGINX cache headers
       res.setHeader('X-Cache-Response-Time', imageResponse.headers['X-Cache-Response-Time']); // Passing through NGINX cache headers
       imageResponse.data.pipe(res);
+      consola.success(`Delivered poster for ${id} via proxy: `, proxyPosterUrl);
     } else if (posterUrl && await checkIfExists(posterUrl)) {
       //console.log("Success! Pipe the image from rating provider directly to the user.");
       const imageResponse = await axios({
