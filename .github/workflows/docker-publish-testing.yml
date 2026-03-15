@@ -22,6 +22,13 @@ jobs:
       REGISTRY: ghcr.io
 
     steps:
+      - name: Set lowercase repository name directly in run step
+        run: |
+          REPO_LC=$(echo "${GITHUB_REPOSITORY}" | tr '[:upper:]' '[:lower:]')
+          echo "REPO_LC=${REPO_LC}" >> ${GITHUB_ENV}
+        env:
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
@@ -100,7 +107,7 @@ jobs:
           platforms: ${{ matrix.platform }}
           cache-from: type=gha,scope=${{ steps.prep.outputs.pair }}
           cache-to: type=gha,scope=${{ steps.prep.outputs.pair }},mode=max
-          outputs: type=image,name=ghcr.io/${{ github.repository }},push-by-digest=true,name-canonical=true,push=true
+          outputs: type=image,name=ghcr.io/${{ env.REPO_LC }},push-by-digest=true,name-canonical=true,push=true
 
       - name: Export digest
         run: |
@@ -126,6 +133,13 @@ jobs:
       REGISTRY: ghcr.io
 
     steps:
+      - name: Set lowercase repository name directly in run step
+        run: |
+          REPO_LC=$(echo "${GITHUB_REPOSITORY}" | tr '[:upper:]' '[:lower:]')
+          echo "REPO_LC=${REPO_LC}" >> ${GITHUB_ENV}
+        env:
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
@@ -165,7 +179,7 @@ jobs:
       - name: Create and push manifest
         working-directory: /tmp/digests
         run: |
-          IMAGE=ghcr.io/${{ github.repository }}
+          IMAGE=ghcr.io/${{ env.REPO_LC }}
           TAGS=(
             "$IMAGE:${{ env.NIGHTLY_VERSION }}"
             "$IMAGE:${{ env.NIGHTLY_VERSION }}-${{ github.sha }}"
